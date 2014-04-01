@@ -95,20 +95,39 @@ public class Game {
 			int c = (int) (0.777 * b);
 			fill[i] =  new Barrier(b, c);
 			
+			boolean trig = false;
+			int ran = (int) (Math.random() * 100);
+			if (ran < 5*i) trig = true;
+			
 			boolean[] input = new boolean[5];
 			for (int j = 0; j < input.length; j++)
 			{
-				if (i % 2 == 0)
+				if (trig == true)
 				{
-					if (j == 0 || j == 3 || j == 4) input[j] = true;
-				}
-				else
-				{
-					if (j == 1 || j == 2)
+					if (Math.random() < .5)
 					{
 						input[j] = true;
 					}
+					if (j == input.length - 1)
+					{
+						input[(int) (Math.random() * 5)] = false;
+					}
+				}	
+				if (trig == false)
+				{
+					if (i % 2 == 0)
+					{
+						if (j == 0 || j == 3 || j == 4) input[j] = true;
+					}
+					else
+					{
+						if (j == 1 || j == 2)
+						{
+							input[j] = true;
+						}
+					}
 				}
+				
 				
 			}
 			
