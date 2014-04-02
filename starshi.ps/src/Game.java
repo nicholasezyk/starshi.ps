@@ -16,7 +16,7 @@ public class Game {
 		int h = Zen.getZenHeight();
 		int w = Zen.getZenWidth();
 		int initial = 700;
-		int finpt = initial - 1;
+		int finpt = initial / 10;
 		
 		long runtime = System.currentTimeMillis();
 		long comp = System.currentTimeMillis();
