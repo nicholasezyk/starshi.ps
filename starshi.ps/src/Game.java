@@ -13,8 +13,7 @@ public class Game {
 		int progress = 0;
 		int totalBarriers = 210;
 		Barrier[] obstacles = new Barrier[totalBarriers];
-		int h = Zen.getZenHeight();
-		int w = Zen.getZenWidth();
+		
 		int initial = 700;
 		int finpt = initial / 10;
 		
@@ -26,6 +25,9 @@ public class Game {
 		
 		boolean collision = false;
 		
+		//loadStartScreen();
+		
+		
 		
 			//int curTime = 0;
 			
@@ -35,10 +37,10 @@ public class Game {
 		while (collision == false && elapsed(runtime) < fortyFiveMinutes)
 		{
 			double d = 0.0;
-			int y = Zen.getMouseY() > h/2 ? Zen.getMouseY() : h/2;
+			int y = Zen.getMouseY() > ht()/2 ? Zen.getMouseY() : ht()/2;
 			
 			
-			drawField(w, h, collision);
+			drawField(0, 0, 0);
 			GamePiece.draw(y); 
 			
 			int block = Barrier.getBlockSize();
@@ -60,7 +62,7 @@ public class Game {
 				{
 					if (elapsed(comp) < bl / 6 || (elapsed(comp) > bl / 2 && elapsed(comp) < 2*bl/3) || elapsed(comp) > 5*bl/6)
 					{
-						obstacles[progress].draw(w - block);
+						obstacles[progress].draw(wd() - block);
 					}
 				}
 				else if (elapsed(comp) > bl)
@@ -78,9 +80,9 @@ public class Game {
 				}
 			}
 			
-			if (collision((Game.w() / 2) - (GamePiece.size() / 2), y, GamePiece.size(), (int) ((1 - d) * Barrier.startPoint), h/2, Barrier.blockSize, obstacles, progress) == true)
+			if (collision((wd() / 2) - (GamePiece.size() / 2), y, GamePiece.size(), (int) ((1 - d) * Barrier.startPoint), ht()/2, Barrier.blockSize, obstacles, progress) == true)
 			{
-				drawField(w, h, true);
+				drawField(155, 48, 255);
 				collision = true;
 			}
 		}
@@ -185,30 +187,14 @@ public class Game {
 		}
 	}
 	
-	public static void drawField(int wi, int he, boolean c)
+	public static void drawField(int r, int g, int b)
 	{
-		if (c == false)
-		{
 			Zen.flipBuffer();
-			for (int a = 0; a < he; a++)
+			for (int a = 0; a < ht(); a++)
 			{
-				Zen.setColor(a*255/he, a*255/he, a*255/he);
-				Zen.fillRect(0, a, wi, 1);
+				Zen.setColor(255 - a*(255-r)/ht(), 255 - a*(255-g)/ht(), 255 - a*(255-b)/ht());
+				Zen.fillRect(0, a, wd(), 1);
 			}
-		}
-		else if (c == true)
-		{
-			Zen.flipBuffer();
-			for (int a = 0; a < he; a++)
-			{
-				Zen.setColor(255 - a*(255 - 3)/he, a*(255 - 168)/he, a*(255 - 158)/he);
-				Zen.fillRect(0, a, wi, 1);
-			}
-
-		}
-				
-		
-
 	}
 	
 	public static int w()
@@ -236,6 +222,16 @@ public class Game {
 				{
 					if (overlap(pieceY, block1, barY + i*Barrier.getBlockSize(), block2) == true) 
 						{
+							drawField(155, 48, 255);
+							GamePiece.draw(pieceY);
+							for (int n = 0; n < 5; n++)
+							{
+								if (a[prog].filled(n) == true)
+								{
+									Zen.setColor(255, 153, 255);
+									Zen.fillRect(barX, barY + n*Barrier.getBlockSize(), block2, block2);
+								}
+							}
 							TextIO.putln("hit");
 							return true;
 						}
@@ -255,6 +251,22 @@ public class Game {
 		if (start2 + range2 >= start1 && start2 + range2 <= start1 + range1) return true;
 		return false;
 	}
+	
+	public static void loadStartScreen()
+	{
+		
+	}
+	
+	public static int ht()
+	{
+		return Zen.getZenHeight();
+	}
+	
+	public static int wd()
+	{
+		return Zen.getZenWidth();
+	}
+	
 	
 	
 
