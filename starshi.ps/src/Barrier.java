@@ -30,17 +30,17 @@ public class Barrier {
 		}
 	}
 	
-	public static int getBlockSize()
+	public static int getBlockSize() //fetcher for blockSize
 	{
 		return blockSize;
 	}
 	
-	public static int getStartPoint()
+	public static int getStartPoint() //fetcher for startPoint
 	{
 		return startPoint;
 	}
 	
-	public Barrier(/*int start,*/ int blink, int cross)
+	public Barrier(/*int start,*/ int blink, int cross) //constructor of a barrier
 	{		
 		//startTime = start;
 		blinkTime = blink;
@@ -49,27 +49,28 @@ public class Barrier {
 		placed = completed = false;
 	}
 	
-	public boolean getplaced()
+	public boolean getplaced() //fetcher for placed
 	{
 		return placed;
 	}
 	
-	public void truthifyplaced()
+	public void truthifyplaced() //makes placed true
 	{
 		placed = true;
 	}
 	
-	public boolean getcompleted()
+	public boolean getcompleted() //fetcher for completed
 	{
 		return completed;
 	}
 	
-	public void truthifycompleted()
+	public void truthifycompleted() //makes completed true
 	{
 		completed = true;
 	}
 	
 	public void draw(int b)
+	//draw method for the blink stage
 	{
 		if (b > 0 && b < Game.w())
 		{
@@ -80,52 +81,15 @@ public class Barrier {
 						//Zen.flipBuffer();
 						Zen.setColor(255, 153, 255);
 						Zen.fillRect(startPoint, h/2 + i*h/10, blockSize, blockSize);
+						//draws pink blocks
 					}
 			}
 		}
 		
-		
-//		long tick = System.currentTimeMillis();
-//		
-//		this.truthifyplaced();
-//		
-//		int b = this.blinkTime;
-//		int c = this.crossTime;
-//		
-//		while (this.completed == false)
-//		{
-//			if ((System.currentTimeMillis() - tick > 0 && System.currentTimeMillis() - tick < b / 4) || (System.currentTimeMillis() - tick > 3*b / 4 && System.currentTimeMillis() - tick < b))
-//			{
-//				for (int i = 0; i < this.coverage.length; i++)
-//				{
-//					if (coverage[i] == true)
-//					{
-//						Zen.flipBuffer();
-//						Zen.setColor(255, 153, 255);
-//						Zen.fillRect(startPoint, h/2 + i*h/10, blockSize, blockSize);
-//					}
-//				}
-//			}
-//			if (System.currentTimeMillis() > tick + b && System.currentTimeMillis() < tick + b + c)
-//			{
-//				for (int i = 0; i < this.coverage.length; i++)
-//				{
-//					if (coverage[i] == true)
-//					{
-//						Zen.flipBuffer();
-//						Zen.fillRect((int) (startPoint - ((System.currentTimeMillis() - b - tick) / c)*startPoint), h/2 + i*h/10, blockSize, blockSize);
-//					}
-//				}	
-//			}
-//			if (System.currentTimeMillis() > tick + b + c)
-//			{
-//				this.truthifycompleted();
-//			}
-//		}
-		
 	}
 	
 	public void draw(double d)
+	//draw method for the cross stage
 	{
 		if (d > 0 && d < 1)
 		{
@@ -135,17 +99,19 @@ public class Barrier {
 					{
 						Zen.setColor(255, 153, 255);
 						Zen.fillRect((int) ((1 - d) * startPoint), h/2 + i*h/10, blockSize, blockSize);
+						//draws pink blocks, with d being the percentage of the screen traveled
 					}
 			}
 		}
 	}
 	
-	public int len()
+	public int len() //length fetcher
 	{
 		return this.coverage.length;
 	}
 	
-	public boolean filled(int v)
+	public boolean filled(int v) //checks to see if a given block is filled
+	//might be modified to take both a Barrier number in obstacles and the block number it already takes
 	{
 		if (v >= 0 && v < len())
 		{
