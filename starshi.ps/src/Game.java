@@ -37,7 +37,7 @@ public class Game {
 		while (collision == false && elapsed(runtime) < fortyFiveMinutes)
 		{
 			double d = 0.0; //tracking variable for crossing Barriers
-			int y = Zen.getMouseY() > ht()/2 ? Zen.getMouseY() : ht()/2; //grabs a vertical position for
+			int y = Zen.getMouseY() > h()/2 ? Zen.getMouseY() : h()/2; //grabs a vertical position for
 //the GamePiece, confining it to the lower half of the screen.
 			
 			
@@ -67,7 +67,7 @@ public class Game {
 					if (elapsed(comp) < bl / 7 || (elapsed(comp) > 2 * bl / 7 && elapsed(comp) <  3 *bl/7) || (elapsed(comp) > 5*bl/7 && elapsed(comp) < 6*bl/7))
 					//ensures three blinks
 					{
-						obstacles[progress].draw(wd() - block); //draws the block at the end of the screen
+						obstacles[progress].draw(w() - block); //draws the block at the end of the screen
 					}
 				}
 				else if (elapsed(comp) > bl)
@@ -88,7 +88,7 @@ public class Game {
 				}
 			}
 			
-			if (collision((wd() / 2) - (GamePiece.size() / 2), y, GamePiece.size(), (int) ((1 - d) * Barrier.startPoint), ht()/2, Barrier.blockSize, obstacles, progress) == true)
+			if (collision((w() / 2) - (GamePiece.size() / 2), y, GamePiece.size(), (int) ((1 - d) * Barrier.startPoint), h()/2, Barrier.blockSize, obstacles, progress) == true)
 			//collision check
 			{
 				drawField(155, 48, 255); //draws the death screen on a white-purple gradient
@@ -102,58 +102,66 @@ public class Game {
 	public static void populate(int count, Barrier[] fill, int init, int fin) {
 		for (int i = 0; i < count; i++)
 		{
-			int c = (int) (init - (init - fin)/(count+1)*i);
-			int b = (int) (0.777 * c);
-			fill[i] =  new Barrier(b, c);
+			int b = (int) (init - (init - fin)/(count)*i); //steps blinkTime down from init to fin linearly
+			int c = (int) (0.777 * b); //sets crossTime as a fraction of blinkTime
+			fill[i] =  new Barrier(b, c); //instantiates the Barrier in that slot
 			
-			boolean trig = false;
+			boolean trig = false; //decides whether the barriers are randomized
 			int ran = (int) (Math.random() * 100);
-			if (ran < 12.5*i) trig = true;
+			if (ran < 12.5*i) trig = true; //barriers necessarily randomize after 8
 			
-			boolean[] input = new boolean[5];
-			String s = "";
+			boolean[] input = new boolean[5]; //the array to be plugged into the Barrier constructor
+			String s = ""; //string value that represents the filling of the array
 			for (int j = 0; j < input.length; j++)
 			{
 				if (trig == true)
+				//if we're randomizing
 				{
 					if (Math.random() < .5 + (i * i)/(count * count)*.46)
+					//probability of a given block spawning, increasing in square pattern 50-96%
 					{
 						input[j] = true;
 						s += "1";
+						//a 1 is a filled barrier
 					}
 					else 
 					{
 						s += "0";
+						//a 0 is an unfilled barrier
 					}
 					if (j == input.length - 1)
+					//full and empty checks at the end of the array
 					{
-						if (s.equals("11111"))
+						if (s.indexOf("0") == -1)
+						//if the index is all 1s; works 100% of the time
 						{
-							input[(int) (Math.random() * 5)] = false;
-							String q = "";
+							input[(int) (Math.random() * input.length)] = false; //one of the positions gets set to false
+							String q = ""; //temp string
 							for (int w = 0; w < input.length; w++)
 							{
-								if (input[w] == true) q += 1;
+								if (input[w] == true) q += "1";
 								else
 								{
-									q += 0;
+									q += "0";
 								}
 							}
 							s = q;
 						}
-						else if (s.equals("00000"))
+						else if (s.indexOf("1") == -1)
+						//if the index is all 0s; works ~99.992% of the time
 						{
 							String q = "";
 							for (int p = 0; p < input.length; p++)
 							{
 								if (Math.random() < .7)
+								//70% chance of a given  block filling
 								{
 									input[j] = true;
 									q += "1";
 								}
 								else
 								{
-									q += 0;
+									q += "0";
 								}
 							}
 							s = q;
@@ -162,6 +170,7 @@ public class Game {
 					}
 				}	
 				else if (trig == false)
+				//if we aren't randomizing
 				{
 					if (i % 2 == 0)
 					{
@@ -169,6 +178,7 @@ public class Game {
 						{
 							input[j] = true;
 							s += ("1");
+							//blocks 0, 3, and 4 fill on an even Barrier
 						}
 						else
 						{
@@ -182,6 +192,7 @@ public class Game {
 						{
 							input[j] = true;
 							s += ("1");
+							//blocks 1 and 2 fill on an odd Barrier
 						}
 						else
 						{
@@ -190,8 +201,8 @@ public class Game {
 					}
 				}
 			}
-			TextIO.putln(i + ": " + s);
-			fill[i].setcoverage(input);
+			TextIO.putln(i + ": " + s); //prints the block number and Barrier layout to the console
+			fill[i].setcoverage(input); //fills in the Barrier
 			
 		}
 	}
@@ -199,37 +210,42 @@ public class Game {
 	public static void drawField(int r, int g, int b)
 	{
 			Zen.flipBuffer();
-			for (int a = 0; a < ht(); a++)
+			for (int a = 0; a < h(); a++)
 			{
-				Zen.setColor(255 - a*(255-r)/ht(), 255 - a*(255-g)/ht(), 255 - a*(255-b)/ht());
-				Zen.fillRect(0, a, wd(), 1);
+				Zen.setColor(255 - a*(255-r)/h(), 255 - a*(255-g)/h(), 255 - a*(255-b)/h());
+				//gradient from white to the RGB input
+				Zen.fillRect(0, a, w(), 1);
 			}
 	}
 	
-	public static int w()
+	public static int w() //fetches width because it's shorter
 	{
 		return Zen.getZenWidth();
 	}
 	
-	public static int h()
+	public static int h() //fetches height because it's shorter
 	{
 		return Zen.getZenHeight();
 	}
 	
-	public static int elapsed(long c)
+	public static int elapsed(long c) //an easier way of determining time elapsed
 	{
 		return (int) (System.currentTimeMillis() - c);
 	}
 	
 	public static boolean collision(int pieceX, int pieceY, int block1, int barX, int barY, int block2, Barrier[] a, int prog)
 	{
+	//collision detection; typically used only for the gamePiece (pieceX, Y, and block1)
+	//and for the Barriers (barX, Y, and block2)
 		if (overlap(pieceX, block1, barX, block2) == true)
+		//if there's an overlap in horizontal position...
 		{
 			for (int i = 0; i < 5; i++)
 			{
 				if (a[prog].filled(i) == true)
 				{
-					if (overlap(pieceY, block1, barY + i*Barrier.getBlockSize(), block2) == true) 
+					if (overlap(pieceY, block1, barY + i*Barrier.getBlockSize(), block2) == true)
+					//...then we check for a vertical position
 						{
 							drawField(155, 48, 255);
 							GamePiece.draw(pieceY);
@@ -241,6 +257,7 @@ public class Game {
 									Zen.fillRect(barX, barY + n*Barrier.getBlockSize(), block2, block2);
 								}
 							}
+							//drawing the killscreen, the gamePiece, and the Barriers
 							TextIO.putln("Hit @ block " + (prog + 1));
 							return true;
 						}
@@ -253,6 +270,7 @@ public class Game {
 	}
 	
 	public static boolean overlap(int start1, int range1, int start2, int range2)
+	//checks for a one-dimensional overlap
 	{
 		if (start1 >= start2 && start1 <= start2 + range2) return true;
 		if (start2 >= start1 && start2 <= start1 + range1) return true;
@@ -263,17 +281,7 @@ public class Game {
 	
 	public static void loadStartScreen()
 	{
-		
-	}
-	
-	public static int ht()
-	{
-		return Zen.getZenHeight();
-	}
-	
-	public static int wd()
-	{
-		return Zen.getZenWidth();
+		//part of lifecycle management, not yet filled in
 	}
 	
 	
