@@ -107,7 +107,7 @@ public class Game {
 			{
 				if (trig == true)
 				{
-					if (Math.random() < .5)
+					if (Math.random() < .5 + (i * i)/(count * count)*.46)
 					{
 						input[j] = true;
 						s += "1";
@@ -232,7 +232,7 @@ public class Game {
 									Zen.fillRect(barX, barY + n*Barrier.getBlockSize(), block2, block2);
 								}
 							}
-							TextIO.putln("hit");
+							TextIO.putln("Hit @ block " + (prog + 1));
 							return true;
 						}
 				}
