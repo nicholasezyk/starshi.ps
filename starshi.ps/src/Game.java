@@ -16,7 +16,7 @@ public class Game {
 		int h = Zen.getZenHeight();
 		int w = Zen.getZenWidth();
 		int initial = 700;
-		int finpt = initial / 10;
+		int finpt = initial - 1;
 		
 		long runtime = System.currentTimeMillis();
 		long comp = System.currentTimeMillis();
@@ -97,9 +97,10 @@ public class Game {
 			
 			boolean trig = false;
 			int ran = (int) (Math.random() * 100);
-			if (ran < 5*i) trig = true;
+			if (ran < 12.5*i) trig = true;
 			
 			boolean[] input = new boolean[5];
+			String s = "";
 			for (int j = 0; j < input.length; j++)
 			{
 				if (trig == true)
@@ -107,30 +108,78 @@ public class Game {
 					if (Math.random() < .5)
 					{
 						input[j] = true;
+						s += "1";
+					}
+					else 
+					{
+						s += "0";
 					}
 					if (j == input.length - 1)
 					{
-						input[(int) (Math.random() * 5)] = false;
+						if (s.equals("11111"))
+						{
+							input[(int) (Math.random() * 5)] = false;
+							String q = "";
+							for (int w = 0; w < input.length; w++)
+							{
+								if (input[w] == true) q += 1;
+								else
+								{
+									q += 0;
+								}
+							}
+							s = q;
+						}
+						else if (s.equals("00000"))
+						{
+							String q = "";
+							for (int p = 0; p < input.length; p++)
+							{
+								if (Math.random() < .7)
+								{
+									input[j] = true;
+									q += "1";
+								}
+								else
+								{
+									q += 0;
+								}
+							}
+							s = q;
+						}
+						
 					}
 				}	
-				if (trig == false)
+				else if (trig == false)
 				{
 					if (i % 2 == 0)
 					{
-						if (j == 0 || j == 3 || j == 4) input[j] = true;
+						if (j == 0 || j == 3 || j == 4) 
+						{
+							input[j] = true;
+							s += ("1");
+						}
+						else
+						{
+							s += ("0");
+						}
+					
 					}
 					else
 					{
 						if (j == 1 || j == 2)
 						{
 							input[j] = true;
+							s += ("1");
+						}
+						else
+						{
+							s += ("0");
 						}
 					}
 				}
-				
-				
 			}
-			
+			TextIO.putln(i + ": " + s);
 			fill[i].setcoverage(input);
 			
 		}
