@@ -10,80 +10,89 @@ public class Game {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		
-		int progress = 0;
-		int totalBarriers = 210;
-		Barrier[] obstacles = new Barrier[totalBarriers];
+		int progress = 0; //a counter that denotes how many barriers have been passed
+		int totalBarriers = 210; //the total number of barriers
+		Barrier[] obstacles = new Barrier[totalBarriers]; //an array of Barriers
 		
-		int initial = 700;
-		int finpt = initial / 10;
+		int initial = 700; //the initial crosstime
+		int finpt = initial / 10; //the crosstime if the player makes it to barrier 210
 		
-		long runtime = System.currentTimeMillis();
-		long comp = System.currentTimeMillis();
+		long runtime = System.currentTimeMillis(); //immutable clock
+		long comp = System.currentTimeMillis(); //mutable clock for local comparisons
 		int fortyFiveMinutes = 1000 * 60 * 45;
 		int bl = -1;
-		int cr = -1;
+		int cr = -1; //dummy variables for blinkTime and crossTime fetching from Barrier
 		
-		boolean collision = false;
+		boolean collision = false; //boolean to check for collisions
 		
-		//loadStartScreen();
+		//loadStartScreen(); //as-of-yet-unfulfilled lifecycle management piece
 		
 		
 		
 			//int curTime = 0;
 			
 		
-		populate(totalBarriers, obstacles, initial, finpt);
+		populate(totalBarriers, obstacles, initial, finpt); //fills up the Barrier array
 		
 		while (collision == false && elapsed(runtime) < fortyFiveMinutes)
 		{
-			double d = 0.0;
-			int y = Zen.getMouseY() > ht()/2 ? Zen.getMouseY() : ht()/2;
+			double d = 0.0; //tracking variable for crossing Barriers
+			int y = Zen.getMouseY() > ht()/2 ? Zen.getMouseY() : ht()/2; //grabs a vertical position for
+//the GamePiece, confining it to the lower half of the screen.
 			
 			
-			drawField(0, 0, 0);
-			GamePiece.draw(y); 
+			drawField(0, 0, 0); //draws the background in a white-to-black gradient
+			GamePiece.draw(y); //draws the gamepiece
 			
-			int block = Barrier.getBlockSize();
-			//int start = Barrier.getStartPoint();
+			int block = Barrier.getBlockSize(); //fetches the blockSize
+			//int start = Barrier.getStartPoint(); //vestige that might be reintroduced
 			
-			if (progress >= totalBarriers) break;
+			if (progress >= totalBarriers) break; //makes sure the game ends
 			
 			if (obstacles[progress].getplaced() == false && obstacles[progress].getcompleted() == false)
+			//enters if the barrier is uninitiated
 			{
-				comp = System.currentTimeMillis();
+				comp = System.currentTimeMillis(); //grabs the local time to make comparisons
 				bl = obstacles[progress].blinkTime;
 				cr = obstacles[progress].crossTime;
 				
-				obstacles[progress].truthifyplaced();
+				obstacles[progress].truthifyplaced(); //sets placed to true
 			}
 			else if (obstacles[progress].getplaced() == true && obstacles[progress].getcompleted() == false)
+			//enters if the barrier is initiated, but has not traversed the entire screen
 			{
 				if (elapsed(comp) > 0 && elapsed(comp) < bl)
+				//covers the interval between initiation 
 				{
-					if (elapsed(comp) < bl / 6 || (elapsed(comp) > bl / 2 && elapsed(comp) < 2*bl/3) || elapsed(comp) > 5*bl/6)
+					if (elapsed(comp) < bl / 7 || (elapsed(comp) > 2 * bl / 7 && elapsed(comp) <  3 *bl/7) || (elapsed(comp) > 5*bl/7 && elapsed(comp) < 6*bl/7))
+					//ensures three blinks
 					{
-						obstacles[progress].draw(wd() - block);
+						obstacles[progress].draw(wd() - block); //draws the block at the end of the screen
 					}
 				}
 				else if (elapsed(comp) > bl)
+				//covers the period after blinkTime has elapsed
 				{
 					if (elapsed(comp) < bl + cr)
+					//if crossTime hasn't completed yet
 					{
-						d = (double) (elapsed(comp) - bl) / cr;
-						obstacles[progress].draw(d);
+						d = (double) (elapsed(comp) - bl) / cr; //converts the times into a ratio...
+						obstacles[progress].draw(d); //...and plugs it into the draw feature
 					}
 					else if (elapsed(comp) >= bl + cr)
+					//if the Barrier has hit the left side of the screen
 					{
-						obstacles[progress].truthifycompleted();
-						progress++;
+						obstacles[progress].truthifycompleted(); //sets completed to true
+						progress++; //increments progress; the cycle repeats
 					}
 				}
 			}
 			
 			if (collision((wd() / 2) - (GamePiece.size() / 2), y, GamePiece.size(), (int) ((1 - d) * Barrier.startPoint), ht()/2, Barrier.blockSize, obstacles, progress) == true)
+			//collision check
 			{
-				drawField(155, 48, 255);
-				collision = true;
+				drawField(155, 48, 255); //draws the death screen on a white-purple gradient
+				collision = true; //registers the collision
 			}
 		}
 		
@@ -93,8 +102,8 @@ public class Game {
 	public static void populate(int count, Barrier[] fill, int init, int fin) {
 		for (int i = 0; i < count; i++)
 		{
-			int b = (int) (init - (init - fin)/(count+1)*i);
-			int c = (int) (0.777 * b);
+			int c = (int) (init - (init - fin)/(count+1)*i);
+			int b = (int) (0.777 * c);
 			fill[i] =  new Barrier(b, c);
 			
 			boolean trig = false;
