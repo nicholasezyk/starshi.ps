@@ -1,4 +1,4 @@
-
+import java.util.Scanner;
 
 public class Game {
 	
@@ -9,6 +9,8 @@ public class Game {
 	
 	private static int initial = 700; //the initial crosstime
 	private static int finpt = initial / 10; //the crosstime if the player makes it to barrier 210
+	
+	private static int thick = 10;
 
 	/**
 	 * @param args
@@ -35,6 +37,8 @@ public class Game {
 		
 		populate(totalBarriers, obstacles, initial, finpt); //fills up the Barrier array
 		
+		//int bet = getBet(); //bet collection system
+		
 		while (collision == false)
 		{
 			double d = 0.0; //tracking variable for crossing Barriers
@@ -44,6 +48,7 @@ public class Game {
 			
 			drawField(0, 0, 0); //draws the background in a white-to-black gradient
 			GamePiece.draw(y); //draws the gamepiece
+			divide(thick);
 			
 			int block = Barrier.getBlockSize(); //fetches the blockSize
 			//int start = Barrier.getStartPoint(); //vestige that might be reintroduced
@@ -282,7 +287,7 @@ public class Game {
 		return false;
 	}
 	
-	public static void loadStartScreen()
+	public static void loadStartScreen() //loads the initial screen and waits for a key to start
 	{
 		boolean start = false;
 		while (start == false)
@@ -308,6 +313,7 @@ public class Game {
 	}
 	
 	public static void rebirth(int pieceX, int pieceY, int block1, int barX, int barY, int block2, Barrier[] a, int prog)
+	//restarts the game
 	{
 		if (collision == true)
 		{
@@ -337,13 +343,19 @@ public class Game {
 						out = true;
 					}
 				}
-				populate(totalBarriers, obstacles, initial, finpt);
-				progress = 0;
-				collision = false;
+				
 			}
+			populate(totalBarriers, obstacles, initial, finpt);
+			progress = 0;
+			collision = false;
 		}
-	}
+	} //Lifecycle
 	
+	public static void divide(int thick)
+	{
+		Zen.setColor(67, 205, 128);
+		Zen.fillRect(0, h()/2 - thick, w(), thick);
+	}
 	
 	
 
