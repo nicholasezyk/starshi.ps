@@ -2,7 +2,13 @@
 
 public class Game {
 	
+	private static boolean collision = false; //boolean to check for collisions
+	private static int progress = 0; //a counter that denotes how many barriers have been passed
+	private static int totalBarriers = 210; //the total number of barriers
+	private static Barrier[] obstacles = new Barrier[totalBarriers]; //an array of Barriers
 	
+	private static int initial = 700; //the initial crosstime
+	private static int finpt = initial / 10; //the crosstime if the player makes it to barrier 210
 
 	/**
 	 * @param args
@@ -19,22 +25,17 @@ public class Game {
 		
 		long runtime = System.currentTimeMillis(); //immutable clock
 		long comp = System.currentTimeMillis(); //mutable clock for local comparisons
-		int fortyFiveMinutes = 1000 * 60 * 45;
+		//int fortyFiveMinutes = 1000 * 60 * 45;
 		int bl = -1;
 		int cr = -1; //dummy variables for blinkTime and crossTime fetching from Barrier
 		
-		boolean collision = false; //boolean to check for collisions
+		//boolean collision = false; //boolean to check for collisions
 		
-		//loadStartScreen(); //as-of-yet-unfulfilled lifecycle management piece
-		
-		
-		
-			//int curTime = 0;
-			
+		loadStartScreen(); //lifecycle management piece			
 		
 		populate(totalBarriers, obstacles, initial, finpt); //fills up the Barrier array
 		
-		while (collision == false && elapsed(runtime) < fortyFiveMinutes)
+		while (collision == false)
 		{
 			double d = 0.0; //tracking variable for crossing Barriers
 			int y = Zen.getMouseY() > h()/2 ? Zen.getMouseY() : h()/2; //grabs a vertical position for
@@ -93,6 +94,8 @@ public class Game {
 			{
 				drawField(155, 48, 255); //draws the death screen on a white-purple gradient
 				collision = true; //registers the collision
+				
+				rebirth((w() / 2) - (GamePiece.size() / 2), y, GamePiece.size(), (int) ((1 - d) * Barrier.startPoint), h()/2, Barrier.blockSize, obstacles, progress); //lifecycle management
 			}
 		}
 		
@@ -247,16 +250,16 @@ public class Game {
 					if (overlap(pieceY, block1, barY + i*Barrier.getBlockSize(), block2) == true)
 					//...then we check for a vertical position
 						{
-							drawField(155, 48, 255);
-							GamePiece.draw(pieceY);
-							for (int n = 0; n < 5; n++)
+						drawField(155, 48, 255);
+						GamePiece.draw(pieceY);
+						for (int n = 0; n < 5; n++)
+						{
+							if (a[prog].filled(n) == true)
 							{
-								if (a[prog].filled(n) == true)
-								{
-									Zen.setColor(255, 153, 255);
-									Zen.fillRect(barX, barY + n*Barrier.getBlockSize(), block2, block2);
-								}
+								Zen.setColor(255, 153, 255);
+								Zen.fillRect(barX, barY + n*Barrier.getBlockSize(), block2, block2);
 							}
+						}
 							//drawing the killscreen, the gamePiece, and the Barriers
 							TextIO.putln("Hit @ block " + (prog + 1));
 							return true;
@@ -281,7 +284,64 @@ public class Game {
 	
 	public static void loadStartScreen()
 	{
-		//part of lifecycle management, not yet filled in
+		boolean start = false;
+		while (start == false)
+		{
+			drawField(238, 64, 0);
+			Zen.setFont("Helvetica-33");
+			Zen.setColor(255 - 238, 255 - 64, 255 - 0);
+			Zen.drawText("Press any key to start", 0, 30);
+			String TT = Zen.getEditText(); //opens up text input
+			Zen.setEditText(""); //resets the text input after each cycle inside the while loop
+			if (TT.length() > 0)
+			{
+				char t = TT.charAt(0); //grabs the first character
+				if ((t >= 'a' && t <= 'z') || (t >= 'A' && t <= 'Z') || (t >= '0' && t <= '9') || t == ' ')
+				{
+					start = true;
+				}
+			}
+			
+		}
+		//part of lifecycle management
+		
+	}
+	
+	public static void rebirth(int pieceX, int pieceY, int block1, int barX, int barY, int block2, Barrier[] a, int prog)
+	{
+		if (collision == true)
+		{
+			boolean out = false;
+			while (out == false)
+			{
+				drawField(155, 48, 255);
+				GamePiece.draw(pieceY);
+				for (int n = 0; n < 5; n++)
+				{
+					if (a[prog].filled(n) == true)
+					{
+						Zen.setColor(255, 153, 255);
+						Zen.fillRect(barX, barY + n*Barrier.getBlockSize(), block2, block2);
+					}
+				}
+				Zen.setFont("Helvetica-33");
+				Zen.setColor(255 - 155, 255 - 48, 255 - 255);
+				Zen.drawText("Continue? Press any key", 0, 30);
+				String TT = Zen.getEditText(); //opens up text input
+				Zen.setEditText(""); //resets the text input after each cycle inside the while loop
+				if (TT.length() > 0)
+				{
+					char t = TT.charAt(0); //grabs the first character
+					if ((t >= 'a' && t <= 'z') || (t >= 'A' && t <= 'Z') || (t >= '0' && t <= '9') || t == ' ')
+					{
+						out = true;
+					}
+				}
+				populate(totalBarriers, obstacles, initial, finpt);
+				progress = 0;
+				collision = false;
+			}
+		}
 	}
 	
 	
