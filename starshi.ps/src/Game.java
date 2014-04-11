@@ -6,11 +6,12 @@ public class Game {
 	private static int progress = 0; //a counter that denotes how many barriers have been passed
 	private static int totalBarriers = 210; //the total number of barriers
 	private static Barrier[] obstacles = new Barrier[totalBarriers]; //an array of Barriers
+	public static Betmatrix counters;
 	
 	private static int initial = 700; //the initial crosstime
 	private static int finpt = initial / 10; //the crosstime if the player makes it to barrier 210
 	
-	private static int thick = 10;
+	public static int thick = 10;
 
 	/**
 	 * @param args
@@ -37,7 +38,7 @@ public class Game {
 		
 		populate(totalBarriers, obstacles, initial, finpt); //fills up the Barrier array
 		
-		//int bet = getBet(); //bet collection system
+		//counters = new Betmatrix("1.5.10.50.100.500.1000.5000.10000.50000.10000.50000.100000.500000.1000000.5000000.");
 		
 		while (collision == false)
 		{
@@ -53,7 +54,7 @@ public class Game {
 			int block = Barrier.getBlockSize(); //fetches the blockSize
 			//int start = Barrier.getStartPoint(); //vestige that might be reintroduced
 			
-			if (progress >= totalBarriers) break; //makes sure the game ends
+			if (progress >= totalBarriers) Zen.closeWindow();//makes sure the game ends
 			
 			if (obstacles[progress].getplaced() == false && obstacles[progress].getcompleted() == false)
 			//enters if the barrier is uninitiated
@@ -89,7 +90,9 @@ public class Game {
 					//if the Barrier has hit the left side of the screen
 					{
 						obstacles[progress].truthifycompleted(); //sets completed to true
-						progress++; //increments progress; the cycle repeats
+						int prog = progress + 1;
+						progress = prog; //increments progress; the cycle repeats
+						TextIO.putln(progress);					
 					}
 				}
 			}
@@ -100,7 +103,7 @@ public class Game {
 				drawField(155, 48, 255); //draws the death screen on a white-purple gradient
 				collision = true; //registers the collision
 				
-				rebirth((w() / 2) - (GamePiece.size() / 2), y, GamePiece.size(), (int) ((1 - d) * Barrier.startPoint), h()/2, Barrier.blockSize, obstacles, progress); //lifecycle management
+				rebirth((w() / 2) - (GamePiece.size() / 2), y, GamePiece.size(), (int) ((1 - d) * Barrier.startPoint), h()/2, Barrier.blockSize, obstacles, 0); //lifecycle management
 			}
 		}
 		
@@ -209,7 +212,7 @@ public class Game {
 					}
 				}
 			}
-			TextIO.putln(i + ": " + s); //prints the block number and Barrier layout to the console
+			//TextIO.putln(i + ": " + s); //prints the block number and Barrier layout to the console
 			fill[i].setcoverage(input); //fills in the Barrier
 			
 		}
@@ -266,7 +269,10 @@ public class Game {
 							}
 						}
 							//drawing the killscreen, the gamePiece, and the Barriers
-							TextIO.putln("Hit @ block " + (prog + 1));
+							//TextIO.putln("Hit @ block " + prog);
+							TextIO.putln("Hit at block " + (prog + 1));
+							prog = 0;
+							progress = 0;
 							return true;
 						}
 				}
@@ -345,8 +351,9 @@ public class Game {
 				}
 				
 			}
+			//progress = 0;
 			populate(totalBarriers, obstacles, initial, finpt);
-			progress = 0;
+			
 			collision = false;
 		}
 	} //Lifecycle
@@ -357,6 +364,20 @@ public class Game {
 		Zen.fillRect(0, h()/2 - thick, w(), thick);
 	}
 	
+	public static void progressUp()
+	{
+		progress++;
+	}
+	
+	public static int getprogress()
+	{
+		return progress;
+	}
+	
+	public static void blankprogress()
+	{
+		progress = 0;
+	}
 	
 
 }
